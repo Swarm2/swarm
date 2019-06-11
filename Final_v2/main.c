@@ -55,10 +55,10 @@ void Tim_ISR(void)
     state1=1;
     timestamp[store_ptr]=12500*(store_ptr+1);
     store_ptr++;
-   /* if(store_ptr>300 )
+    if(store_ptr>300 )
     {
     store_ptr=0;
-    }*/
+    }
     QEIPositionSet(QEI1_BASE,97);
     QEIPositionSet(QEI0_BASE,97);
     GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1,0xFF);
