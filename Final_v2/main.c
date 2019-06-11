@@ -1,5 +1,7 @@
 
 
+/
+
 /**
  * main.c
  */
@@ -41,7 +43,8 @@ uint32_t store_ptr=0,read_ptr=0,send_ptr=0;
 uint32_t timestamp[100];
 encoder_parameters wh1,wh2;
 bool state1;
-char s[100];
+
+
 void Tim_ISR(void)
 {
 
@@ -55,12 +58,12 @@ void Tim_ISR(void)
     state1=1;
     timestamp[store_ptr]=12500*(store_ptr+1);
     store_ptr++;
-    if(store_ptr>300 )
+   if(store_ptr>300 )
     {
     store_ptr=0;
     }
-    QEIPositionSet(QEI1_BASE,97);
-    QEIPositionSet(QEI0_BASE,97);
+    QEIPositionSet(QEI1_BASE,0);
+    QEIPositionSet(QEI0_BASE,0);
     GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1,0xFF);
 
 
@@ -93,17 +96,10 @@ int main(void)
 
     while(1){
 
-       /* while(state1)
-        {
-            read_ptr++;
-        }*/
-       //lL = (wh1.pos[2]);
 
-        //lR = L(wh2.pos[store_ptr]);
    //GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1,0x00);
         if(read_ptr!=store_ptr)
         {
-
 
         lL = L(wh1.pos[read_ptr]);
               lR = L(wh2.pos[read_ptr]);
@@ -145,3 +141,4 @@ int main(void)
 
 
 }
+
