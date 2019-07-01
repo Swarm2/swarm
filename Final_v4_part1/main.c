@@ -121,8 +121,8 @@ int main(void)
                   dtheta = (lL-lR)/WIDTH;
                   theta = theta + dtheta; // update of theta to calculate the x and y displacement
                   disp=(lL+lR)/2 ;
-                  x=x+(disp*sin(theta));
-                  y=y+(disp*cos(theta));
+                  x[read_ptr]=x[read_ptr]+(disp*sin(theta));
+                  y[read_ptr]=y[read_ptr]+(disp*cos(theta));
                   read_ptr++;
                   if(read_ptr>100)
                   {
