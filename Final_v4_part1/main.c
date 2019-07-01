@@ -117,38 +117,17 @@ int main(void)
         {
 
        lL = L(wh1.pos[read_ptr]);
-            //lL=;
-              lR = L(wh2.pos[read_ptr]);
-              //Serial.println(lL);
-              dtheta = (lL-lR)/(2*WIDTH);
-              theta = theta + dtheta; // update of theta to calculate the x and y displacement
-
-                if(!((abs(lL)>abs(lR))^(dtheta>0)))
-                {
-                  disp= -abs(lL+lR)/2;    // only magnitude of displacement of center of bot
-                }
-                else
-                {
-                  disp= abs(lL+lR)/2;
-                }
-
-              if(theta>6.28)              //reset the theta
-               {
-                theta = theta- 6.28;
-                }
-                else if(theta<(-6.28)){
-                  theta = theta + 6.28;
+                  lR = L(wh2.pos[read_ptr]);
+                  dtheta = (lL-lR)/WIDTH;
+                  theta = theta + dtheta; // update of theta to calculate the x and y displacement
+                  disp=(lL+lR)/2 ;
+                  x=x+(disp*sin(theta));
+                  y=y+(disp*cos(theta));
+                  read_ptr++;
+                  if(read_ptr>100)
+                  {
+                   read_ptr=0;
                   }
-              x[read_ptr]=x[read_ptr-1]+(disp*sin(theta));
-              y[read_ptr]=y[read_ptr-1]+(disp*cos(theta));
-              read_ptr++;
-              if(read_ptr>300)
-              {
-               read_ptr=0;
-              }
-
-
-              state1=0;
 
 
         }
