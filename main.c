@@ -94,8 +94,8 @@ int main(void)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE,GPIO_PIN_1);
 
-         int v1=0,v=0, e1,e0,  r=70,u=0,  k1=0.3,k2=2,k3, sum=0 ,m=2;
-        float t=0;
+         int v1=0,v=0, e1,e0,  r=70,u=0,  k1=2,k3, sum=0 ,m=2;
+        float t=0,k2=0.1;
     //set timer value to zero
       while(1)
       {
@@ -111,7 +111,7 @@ int main(void)
         */  if(e1>0)
          { e1=(-1*m*t)+r;
           sum =sum+e1;
-          u=(k1*e1)+(k2*t*sum);
+          u=(k1*e1)+(t/(k2*sum));
           v=v1+u;
           v1=v;
 t++;}
