@@ -1,0 +1,107 @@
+--------------------
+Application Layer
+--------------------
+initialize microcontroller        // TODO: Remember to initialize time stamp
+initialize main controller comms
+initialize inter robot comms      // TODO: Remember to set ID
+initialize encoders
+while()
+{
+	get current pose
+	send current pose to other robots
+	recieve current pose from other robots
+	set current pose of other robots to main controller
+}
+
+--------------------
+HAL
+--------------------
+void initialize_microcontroller();
+void initialize_main_controller_comms();
+void initialize_interrobot_comms();
+void initialize_encoders();
+
+typedef struct{
+	int x;
+	int y;
+	int z;
+	int roll;
+	int pitch;
+	int yaw;
+}tPose;
+
+typedef struct{
+	uint32_t timestamp;  //TODO: Find out the correct representation
+	tPose pose;
+}tPoseStamped;
+
+typedef struct{
+	uint8_t id;
+	tPoseStamped pose_stamped;
+}tPoseStampedNamed;
+
+// Reads the current pose of this robot
+// current_pose [out] : Current pose of the robot
+// returns true if operation is successful, else false
+bool get_current_pose_of_this_robot(tPoseStamped* current_pose);
+
+// Sends the current pose of this robot to other robots
+// current_pose [in] : Current pose of the robot
+// returns true if operation is successful, else false
+bool send_current_pose_of_this_robot_to_other_robots(const tPoseStampedNamed current_pose);
+
+// Receives the poses of the other robots
+// pose_list [out] : Poses of other robots
+// num_poses [out] : Number of poses recieved
+// returns true if operation is successful, else false
+bool recieve_current_poses_of_other_robots(tPoseStampedNamed pose_list[], uint8_t* num_poses);
+
+// Sends the current poses of other robots to the main controller
+// pose_list [in] : Poses of other robots
+// num_poses [in] : Number of poses to be send
+// returns true if operation is successful, else false
+bool send_poses_robots_to_main_controller(const tPoseStampedNamed pose_list[], const uint8_t num_poses);
+
+
+---------------------
+Register
+---------------------
+// Initializes UART peripherial
+// module_id [in] : Defines the ID of the peripherial to be used
+// baud [in]   : baud rate in decimal for example 9600 baud etc
+// parity [in] : 0 for none, 1 for even, 2 for odd
+// stop_bits [in] : Number of stop bits 
+// sync[in] : 0 for Synchronous and 1 for Asynchronous.
+void uart_init(uint8_t module_id, uint32_t baud, uint8_t parity, uint8_t stop_bits, uint8_t sync);
+
+
+// receive data from encoders
+//position[out] : 
+void receive_data_from_encoders(int* ticks )
+
+// Sets the destination and source address for packets to be sent
+//
+//
+void send_data(unit16_t src_addr, unit16_t dest_addr, char* data, uint16_t size);
+
+//
+bool uart_(uint16_t src_addr, uint16_t dest_addr , char* data, uint16_t size);
+
+
+// receiveing data from the bots 
+// saving the source addresses of other robots
+//
+void receive_data(int *data_list[], uint8_t* num_poses)
+
+void configure_as_router(uint16_t addr[], );
+
+
+// send data to main microcontroller
+bool uart_send(uint8_t module_id, char* data, uint16_t size);
+
+//receive data from xbee
+//num_poses[out]: 
+//
+bool uart_recieve( int*data_list[],uint8_t* num_poses,uint8_t module_id[]]666666666666)
+
+
