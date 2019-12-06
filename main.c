@@ -1,36 +1,3 @@
-//============================================================================
-// Name        : Tiva_i2c.c
-// Author      : Mahendra Gunawardena
-// Version     : Rev 0.01
-// Copyright   : Your copyright notice
-// Description : Tiva i2c in C++, Ansi-style
-//============================================================================
-/*
- * Tiva_i2c.c
- * Implementation of a i2c interface
- *
- * Copyright Mahendra Gunawardena, Mitisa LLC
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL I
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-
 #include <stdint.h>
 #include <stdbool.h>
 //#include "Tiva_i2c.h"
@@ -44,7 +11,9 @@
 #include "driverlib/gpio.h"
 #include "driverlib/pin_map.h"
 
-void initI2C0(void)
+#define device_address 0b1000000
+
+void masterinitI2C0(void)
 {
     //This function is for eewiki and is to be updated to handle any port
 
@@ -75,67 +44,29 @@ void initI2C0(void)
     HWREG(I2C0_BASE + I2C_O_FIFOCTL) = 80008000;
 }
 
-uint8_t readI2C0(uint16_t device_address, uint16_t device_register)
-{
-    //specify that we want to communicate to device address with an intended write to bus
-    I2CMasterSlaveAddrSet(I2C0_BASE, device_address, false);
-
-    //the register to be read
-    I2CMasterDataPut(I2C0_BASE, device_register);
-
-    //send control byte and register address byte to slave device
-    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_SINGLE_SEND);
-
-    //wait for MCU to complete send transaction
-    while(I2CMasterBusy(I2C0_BASE));
-
-    //read from the specified slave device
-    I2CMasterSlaveAddrSet(I2C0_BASE, device_address, true);
-
-    //send control byte and read from the register from the MCU
-    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_SINGLE_RECEIVE);
-
-    //wait while checking for MCU to complete the transaction
-    while(I2CMasterBusy(I2C0_BASE));
-
-    //Get the data from the MCU register and return to caller
-    return(I2CMasterDataGet(I2C0_BASE));
-}
-
-void writeI2C0(uint16_t device_address, uint16_t device_register, uint8_t device_data)
-{
-    //specify that we want to communicate to device address with an intended write to bus
-    I2CMasterSlaveAddrSet(I2C0_BASE, device_address, false);
-
-    //register to be read
-    I2CMasterDataPut(I2C0_BASE, device_register);
-
-    //send control byte and register address byte to slave device
-    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_START);
-
-    //wait for MCU to finish transaction
-    while(I2CMasterBusy(I2C0_BASE));
-
-   // I2CMasterSlaveAddrSet(I2C0_BASE, device_address, true);
-
-    //specify data to be written to the above mentioned device_register
-    I2CMasterDataPut(I2C0_BASE, device_data);
-
-    //wait while checking for MCU to complete the transaction
-    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
-
-    //wait for MCU & device to complete transaction
-  while(I2CMasterBusy(I2C0_BASE));
-}
-
-uint32_t k;
+char a[40] = {'s','a','r','o','d','e'};
+int i=0;
 int main(){
-    initI2C0();
-
-    while(1)
+    masterinitI2C0();
+    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_START);
+    //specify that we want to communicate to device address with an intended write to bus
+    while(a[i]!='\0')
     {
-   writeI2C0(0b0000001, 0x40025010 , 0xFF);
+            I2CMasterSlaveAddrSet(I2C0_BASE, device_address, false);
+           // HWREG(I2C3_BASE + I2C_O_MDR) = HWREG(I2C3_BASE + I2C_O_MSA);
+            //the register to be read
+            //HWREG(I2C3_BASE + I2C_O_FIFOCTL) = 80008000;
+            I2CMasterDataPut(I2C0_BASE, a[i++]);
+            I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_CONT);
+            //send control byte and register address byte to slave device
+//           I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_SINGLE_SEND);
+
+            while(I2CMasterBusy(I2C0_BASE));
+
+
+            //I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_STOP);
+       //     while(I2CMasterBusy(I2C0_BASE));
     }
-
-
+    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_STOP);
+    return 0;
 }
